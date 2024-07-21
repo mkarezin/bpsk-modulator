@@ -1,0 +1,36 @@
+#ifndef _CONFIG_H_
+#define _CONFIG_H_
+
+#include <stdint.h>
+
+#include "mcu.h"
+
+#include "config-macros.h"
+
+#define SAMPLE_PER_BIT		(25)
+
+#define HCLK				(100000000)
+#define DEFAULT_SYSTEM_CLOCK_FREQUENCY		(16000000)
+
+#define SYSTEM_TIMER_TIMEBASE_FREQUENCY_HZ		(1000)
+
+#define SAMPLE_DATA_TYPE	uint16_t
+#define SAMPLE_BUFFER_SIZE	(SAMPLE_PER_BIT)
+
+//	Периферия
+#define GENERATOR_TIMER		TIM1
+#define GENERATOR_INTERFACE	GPIOA
+#define GENERATOR_DMA_STREAM	DMA2_Stream5
+#define GENERATOR_DMA_STREAM_CHANNEL	(6)
+#define GENERATOR_DMA_CONTROLLER	DMA2
+#define GENERATOR_DMA_CONFIGURATION	((GENERATOR_DMA_STREAM_CHANNEL << DMA_SxCR_CHSEL_Pos) | \
+									 DMA_SxCR_PL_1 | DMA_SxCR_PL_0 | DMA_SxCR_MSIZE_0 | DMA_SxCR_PSIZE_0 | \
+									 DMA_SxCR_MINC | DMA_SxCR_DIR_0 | DMA_SxCR_CIRC)
+#define GENERATOR_BUFFER_FILLER_DMA_STREAM		DMA2_Stream6
+#define GENERATOR_BUFFER_FILLER_DMA_STREAM_CHANNEL		(1)
+#define GENERATOR_BUFFER_FILLER_DMA_CONTROLLER		DMA2
+#define GENERATOR_BUFFER_FILLER_DMA_CONFIGURATION		((GENERATOR_BUFFER_FILLER_DMA_STREAM_CHANNEL << DMA_SxCR_CHSEL_Pos) | \
+                                                         DMA_SxCR_PL_1 | DMA_SxCR_MSIZE_0 | DMA_SxCR_PSIZE_0 | \
+                                                         DMA_SxCR_MINC | DMA_SxCR_PINC | DMA_SxCR_DIR_1)
+
+#endif	//	_CONFIG_H_
