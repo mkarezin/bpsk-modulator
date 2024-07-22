@@ -52,7 +52,7 @@ void calculateSamples(uint32_t peekToPeekVoltage)
 static void calculateSample(SampleBufferInfo *sampleBufferInfo)
 {
 	float startTime = 0.0;
-	float endTime = (2 * PI_NUMBER);
+	float endTime = (16 * PI_NUMBER);
 	float signalPhase = (sampleBufferInfo->isPositivePhase) ? 0.0 : PI_NUMBER;
 	float deltaTime = (endTime - startTime) / SAMPLE_PER_BIT;
 	float currentTime = startTime;
@@ -60,7 +60,7 @@ static void calculateSample(SampleBufferInfo *sampleBufferInfo)
 	
 	for (uint8_t i = 0; i < SAMPLE_PER_BIT; i++)
 	{
-		float calculatedSample = ((amplitude * sin(currentTime + signalPhase)) + amplitude);
+		float calculatedSample = ((amplitude * cos(currentTime + signalPhase)) + amplitude);
 		sampleBufferInfo->value[i] = calculateADCSample(calculatedSample);
 		currentTime += deltaTime;
 	}

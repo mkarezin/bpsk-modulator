@@ -6,6 +6,7 @@
 
 #include "system-timer.h"
 #include "config.h"
+#include "gpio.h"
 
 #define PLLM_MIN_FREQUENCY		(950000)
 #define PLLM_MAX_FREQUENCY		(2100000)
@@ -17,7 +18,7 @@
 #define PLLQ_MAX_FREQUENCY		(48000000)
 
 #if !defined (HSE_VALUE)
-	#define HSE_VALUE		(25000000)
+	#define HSE_VALUE		(8000000)
 #endif	//	HSE_VALUE
 #if !defined (HSI_VALUE)
 	#define HSI_VALUE		(16000000)
@@ -113,15 +114,15 @@ ClockSettings clockSettings =
 	.systemClockSource = pll,
 	.pllSettings =
 	{
-		.clockSource = hse,
+		.clockSource = hsi,
 		.pllM = 0,
 		.pllN = 0,
 		.pllP = 0,
 		.pllQ = 0,
 	},
 	.ahbPrescaler = AhbDividedBy1,
-	.apb1Prescaler = ApbDividedBy4,
-	.apb2Prescaler = ApbDividedBy2,
+	.apb1Prescaler = ApbDividedBy2,
+	.apb2Prescaler = ApbDividedBy1,
 	.mco1 = { .clockSource = McoSourceNone },
 	#ifdef DEBUG_MCU_SYSCLK
 	.mco2 = { .clockSource = McoSourceSystemClock, .prescaler = McoDividedBy5 },
@@ -137,7 +138,7 @@ ClockSettings defaultClockSettings =
 	.systemClockSource = hsi,
 	.pllSettings = { 0 },
 	.ahbPrescaler = AhbDividedBy1,
-	.apb1Prescaler = ApbDividedBy1,
+	.apb1Prescaler = ApbDividedBy2,
 	.apb2Prescaler = ApbDividedBy1,
 	.mco1 = { .clockSource = McoSourceNone },
 	.mco2 = { .clockSource = McoSourceNone },
@@ -155,6 +156,19 @@ static bool enablePll(void);
 
 void initializeClock(void)
 {
+#ifdef DEBUG_MCU_SYSCLK
+	PinSettings pinSettings = { 0 };
+	
+	pinSettings.port = GPIOC;
+	pinSettings.pinNumber = pinNumber9;
+	pinSettings.mode = alternateFunctionPinMode;
+	pinSettings.type = pushPullPinType;
+	pinSettings.speed = veryHighPinSpeed;
+	pinSettings.pull = noPullsPinPull;
+	pinSettings.alternateFunctionNumber = alternateFunction0;
+	
+	initializePin(&pinSettings);
+#endif	//	DEBUG_MCU_SYSCLK
 	do
 	{
 		updateSystemTimer();
@@ -184,12 +198,12 @@ void initializeClock(void)
 		
 		uint32_t temp = RCC->CFGR;
 		temp &= ~(RCC_CFGR_PPRE2_Msk | RCC_CFGR_PPRE1_Msk | RCC_CFGR_HPRE_Msk | RCC_CFGR_SW_Msk);
-		temp |= (RCC_CFGR_PPRE2_DIV2 | RCC_CFGR_PPRE1_DIV4 | RCC_CFGR_HPRE_DIV1);
+		temp |= (RCC_CFGR_PPRE2_DIV1 | RCC_CFGR_PPRE1_DIV2 | RCC_CFGR_HPRE_DIV1);
 		temp |= RCC_CFGR_SW_PLL;
 		RCC->CFGR = temp;
 		while ((RCC->CFGR & RCC_CFGR_SWS_PLL) != RCC_CFGR_SWS_PLL)	;
 		
-		RCC->CR &= ~RCC_CR_HSION;
+		//RCC->CR &= ~RCC_CR_HSION;
 		
 		updateSystemTimer();
 		

@@ -6,7 +6,7 @@ int main(void)
 {
 	mcuInitialization();
 	
-	calculateSamples(1000);
+	calculateSamples(50);
 	
     runGenerator();
 }

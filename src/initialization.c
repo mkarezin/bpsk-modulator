@@ -31,7 +31,7 @@ static void initializeGpio(void)
 							 pinNumber9 | pinNumber10 | pinNumber11);
 	pinSettings.mode = outputPinMode;
 	pinSettings.type = pushPullPinType;
-	pinSettings.speed = mediumPinSpeed;
+	pinSettings.speed = veryHighPinSpeed;
 	pinSettings.pull = noPullsPinPull;
 	initializePin(&pinSettings);
 }
